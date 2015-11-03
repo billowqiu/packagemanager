@@ -11,7 +11,7 @@ public:
 
     virtual ISocketService* get_socket_service();
     virtual ISharedMemoryService* get_sharedmemory_service();
-	
+
 	virtual float Version();
     virtual bool Startup();
     virtual bool Shutdown();
@@ -24,3 +24,4 @@ private:
 };
 
 #endif // COMM_PACKAGE_H_
+

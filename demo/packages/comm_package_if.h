@@ -15,12 +15,14 @@ interface ICommPackage
 
 interface ISocketService
 {
+    virtual ~ISocketService() {}
     virtual void Send(const char* data, uint16_t len) = 0;
     virtual void Recv(char* data, uint16_t& len) = 0;
 };
 
 interface ISharedMemoryService
 {
+    virtual ~ISharedMemoryService() {}
     virtual int Shmget() = 0;
     virtual void* Shmat(int id) = 0;
     virtual int Shmdt(void* addr) = 0;

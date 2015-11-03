@@ -1,0 +1,5 @@
+#!/bin/env python
+
+env = Environment()
+env.Library('tinyxml', ['tinyxml.cpp', 'tinyxmlparser.cpp', 'tinyxmlerror.cpp', 'tinystr.cpp'])
+

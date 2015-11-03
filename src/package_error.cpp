@@ -20,12 +20,12 @@ const char* PackageError::getErrorString(ErrorType errorCode)
         /* 10*/"package config init fail",
         /* 11*/"package config load fail",
     };
-    
+
     int errorIndex = -1 * (int)errorCode;
     if (0 > errorIndex || errorIndex >= (int)(sizeof(errorTab)/sizeof(errorTab[0])))
     {
         return errorTab[0];
-    } 
+    }
     else
     {
         return errorTab[errorIndex];

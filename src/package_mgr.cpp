@@ -10,7 +10,7 @@ const std::string MSG_STR_SHUTDOWN	= "Shutdown";
 const std::string MSG_STR_OK		= "[  OK  ]";
 const std::string MSG_STR_FAILED	= "[ FAIL ]";
 
-namespace packagemgr 
+namespace packagemgr
 {
 
 PackageManager::PackageManager():
@@ -19,47 +19,46 @@ m_user_data(NULL)
 }
 
 PackageManager::~PackageManager()
-{	
+{
 }
 
-PackageError::ErrorType PackageManager::Startup() 
+PackageError::ErrorType PackageManager::Startup()
 {
     if(!Config::Load(g_szConfig_file))
     {
         return PackageError::PACKAGE_ERR_CONFIG_LOAD_FAIL;
     }
-    
+
 	for (uint32_t i=0; i<Config::package_configs_.size(); ++i)
 	{
-		//¼ÓÔØ°ü
+		//åŠ è½½åŒ…
 		std::string package_name;
         PackageError::ErrorType ret = AddPackage(Config::package_configs_[i].path, package_name);
         PrintMsg(package_name, MSG_STR_STARTUP, ret == PackageError::PACKAGE_SUCCESS);
 	}
-	
+
     return PackageError::PACKAGE_SUCCESS;
 }
 
-PackageError::ErrorType PackageManager::AddPackage(const std::string& file, std::string& package_name) 
-{	
-	//°ü¶ÔÓ¦µÄ¶þ½øÖÆ¾ä±ú
+PackageError::ErrorType PackageManager::AddPackage(const std::string& file, std::string& package_name)
+{
+	//åŒ…å¯¹åº”çš„äºŒè¿›åˆ¶å¥æŸ„
 	package_handler handle;
-	
+
 #ifndef _WIN32
 	handle = PM_LOAD_LIBRARY(file.c_str());
 #else
 	handle = LoadLibraryEx(file.c_str(), NULL, DONT_RESOLVE_DLL_REFERENCES);
 #endif
-	
-	if(!handle) 
+
+	if(!handle)
 	{
 		std::cerr << "load package " << file << " failed : " << PM_GET_ERROR_STRING() << std::endl;
         return PackageError::PACKAGE_ERR_SYSTEM_LOAD_FAIL;
 	}
-	
 #ifdef _WIN32
 	// Reload dll with references resolved...
-	FreeLibrary(handle);			
+	FreeLibrary(handle);
 	handle = PM_LOAD_LIBRARY(file.c_str());
 	if(!handle)
 	{
@@ -67,7 +66,7 @@ PackageError::ErrorType PackageManager::AddPackage(const std::string& file, std:
         return PackageError::PACKAGE_ERR_SYSTEM_LOAD_FAIL;
 	}
 #endif
-	//»ñÈ¡°ü¼ÓÔØ/Ð¶ÔØº¯Êý·ûºÅ
+	//èŽ·å–åŒ…åŠ è½½/å¸è½½å‡½æ•°ç¬¦å·
 	PACKAGE_LOAD load_func = (PACKAGE_LOAD)PM_GET_ADDRESS(handle, "packageLoad");
 	if (!load_func)
 	{
@@ -75,7 +74,7 @@ PackageError::ErrorType PackageManager::AddPackage(const std::string& file, std:
 		PM_UNLOAD_LIBRARY(handle);
         return PackageError::PACKAGE_ERR_GET_LOAD_FUN_FAIL;
 	}
-	
+
 	PACKAGE_UNLOAD unload_func = (PACKAGE_UNLOAD)PM_GET_ADDRESS(handle, "packageUnload");
 	if (!unload_func)
 	{
@@ -83,30 +82,29 @@ PackageError::ErrorType PackageManager::AddPackage(const std::string& file, std:
 		PM_UNLOAD_LIBRARY(handle);
         return PackageError::PACKAGE_ERR_GET_UNLOAD_FUN_FAIL;
 	}
-	
-	//µ÷ÓÃ°üµÄ¼ÓÔØº¯Êý£¬¼ÓÔØÊ§°ÜÔòÐ¶ÔØ°ü
+	//è°ƒç”¨åŒ…çš„åŠ è½½å‡½æ•°ï¼ŒåŠ è½½å¤±è´¥åˆ™å¸è½½åŒ…
 	IPackage* package = load_func(this);
 	if (!package)
-	{		
+	{
 		std::cerr << "invoke package " << file << " 'packageLoad' func failed" << std::endl;
         PM_UNLOAD_LIBRARY(handle);
         return PackageError::PACKAGE_ERR_INVOKE_LOAD_FUN_FAIL;
 	}
 	else
 	{
-		//Æô¶¯°ü·þÎñ£¬°ü¿ª·¢Õß±ØÐë±£Ö¤ÆäÆô¶¯µÄÕýÈ·ÐÔ
+		//å¯åŠ¨åŒ…æœåŠ¡ï¼ŒåŒ…å¼€å‘è€…å¿…é¡»ä¿è¯å…¶å¯åŠ¨çš„æ­£ç¡®æ€§
 		bool ret = true;
 		ret = package->Startup();
 		if (!ret)
 		{
-			PM_UNLOAD_LIBRARY(handle);			
+			PM_UNLOAD_LIBRARY(handle);
             return PackageError::PACKAGE_ERR_PACKAGE_STARTUP_FAIL;
 		}
-		//Ìí¼Óµ½°ü¹ÜÀíÈÝÆ÷
+		//æ·»åŠ åˆ°åŒ…ç®¡ç†å®¹å™¨
 		package->set_info(IPackage::PackageInfo(handle, load_func, unload_func));
 		package_name = package->Name();
-		
-		//·ÀÖ¹ÖØ¸´¼ÓÔØ
+
+		//é˜²æ­¢é‡å¤åŠ è½½
 		package_map::iterator it = m_packages_map.find(package_name);
 		if (it != m_packages_map.end())
 		{
@@ -117,57 +115,61 @@ PackageError::ErrorType PackageManager::AddPackage(const std::string& file, std:
 		m_packages_map.insert(std::make_pair(package_name, package));
 		m_packages_vec.push_back(package);
 	}
-	
+
     return PackageError::PACKAGE_SUCCESS;
 }
 
 PackageError::ErrorType PackageManager::Shutdown()
 {
-	//ÄæÐòÉ¾³ý£¬ÒÔ½«°üÖ®¼äµÄÒÀÀµÓ°Ïì¼õÐ¡
+	//é€†åºåˆ é™¤ï¼Œä»¥å°†åŒ…ä¹‹é—´çš„ä¾èµ–å½±å“å‡å°
 	for ( package_vec::reverse_iterator rit = m_packages_vec.rbegin(); rit != m_packages_vec.rend(); ++rit)
 	{
 		if ( *rit )
 		{
-			//¹Ø±Õ°ü·þÎñ£¬°ü¿ª·¢ÕßÊµÏÖÖ®
+			//å…³é—­åŒ…æœåŠ¡ï¼ŒåŒ…å¼€å‘è€…å®žçŽ°ä¹‹
 			bool ret = (*rit)->Shutdown();
 			PrintMsg((*rit)->Name(), MSG_STR_SHUTDOWN, ret);
-			//´Ó½ø³ÌÖÐÐ¶ÔØ
-			PM_UNLOAD_LIBRARY((*rit)->get_info().m_handle);						
+            //ToDO,è°ƒç”¨packageçš„unload_func
+            IPackage::PackageInfo pi = (*rit)->get_info();
+            if (pi.m_packageUnload)
+            {
+                pi.m_packageUnload();
+            }
+			//ä»Žè¿›ç¨‹ä¸­å¸è½½
+			PM_UNLOAD_LIBRARY((*rit)->get_info().m_handle);
 		}
 	}
-	
-	//ÓÉÓÚÈÝÆ÷µÄerase²Ù×÷²»Ö§³Öreverse_iterator£¬·Åµ½×îºóÖ±½ÓÇå¿Õ°É
-	
+	//ç”±äºŽå®¹å™¨çš„eraseæ“ä½œä¸æ”¯æŒreverse_iteratorï¼Œæ”¾åˆ°æœ€åŽç›´æŽ¥æ¸…ç©ºå§
 	m_packages_vec.clear();
-	m_packages_map.clear();	
-	
+	m_packages_map.clear();
+
     return PackageError::PACKAGE_SUCCESS;
 }
 
 PackageError::ErrorType PackageManager::DelPackage( const std::string& package_name)
 {
-	package_map::iterator itm = m_packages_map.find(package_name);	
+	package_map::iterator itm = m_packages_map.find(package_name);
 	if (itm == m_packages_map.end())
 	{
 		return PackageError::PACKAGE_ERR_PACKAGE_NOT_FOUND;
 	}
-	
-	//¹Ø±Õ°ü·þÎñ£¬°ü¿ª·¢ÕßÌá¹©
+
+	//å…³é—­åŒ…æœåŠ¡ï¼ŒåŒ…å¼€å‘è€…æä¾›
 	itm->second->Shutdown();
-	//´Ó½ø³ÌÖÐÐ¶ÔØ
+	//ä»Žè¿›ç¨‹ä¸­å¸è½½
 	PM_UNLOAD_LIBRARY(itm->second->get_info().m_handle);
-	//´Ó°ü¹ÜÀíÈÝÆ÷ÖÐÉ¾µô
-	m_packages_map.erase(itm);	
-	
+	//ä»ŽåŒ…ç®¡ç†å®¹å™¨ä¸­åˆ æŽ‰
+	m_packages_map.erase(itm);
+
 	for(package_vec::iterator itv = m_packages_vec.begin(); itv!=m_packages_vec.end(); ++itv)
 	{
 		if ((*itv)->Name() == package_name)
 		{
 			m_packages_vec.erase(itv);
 			break;
-		}	
+		}
 	}
-	
+
     return PackageError::PACKAGE_SUCCESS;
 }
 
@@ -186,7 +188,7 @@ void PackageManager::PrintMsg( const std::string &sname, const std::string &proc
 {
 	std::string lineMsg = sname;
 
-	if ( sname.size() < 60u ) 
+	if ( sname.size() < 60u )
 	{
 		for ( size_t i = 0u; i < 60u - sname.size(); ++i )
 		{
@@ -206,13 +208,14 @@ void PackageManager::PrintMsg( const std::string &sname, const std::string &proc
 	if ( result )
 	{
 		lineMsg += MSG_STR_OK;
-	}		
+	}
 	else
 	{
 		lineMsg += MSG_STR_FAILED;
-	}		
+	}
 
 	std::cout << lineMsg << std::endl;
 }
 
 }
+

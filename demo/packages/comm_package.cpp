@@ -2,18 +2,21 @@
 #include "common_define.h"
 #include "socket_service.h"
 #include "sharedmemory_service.h"
+#include <iostream>
 using namespace packagemgr;
 
 CommPackage::CommPackage():
 socket_service_(NULL),
 sharedmemory_service_(NULL)
 {
+    std::cout << __FUNCTION__ << std::endl;
 }
 
 CommPackage::~CommPackage()
 {
     delete sharedmemory_service_;
     delete socket_service_;
+    std::cout << __FUNCTION__ << std::endl;
 }
 
 ISocketService* CommPackage::get_socket_service()

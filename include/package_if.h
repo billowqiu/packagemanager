@@ -1,12 +1,11 @@
 /********************************************************************
-	filename: 	package_if.h
+	filename:	package_if.h
 	author:		billowqiu
-	
-	purpose:	packageÀàËÆjavaÖĞ°ü(jar)µÄ¸ÅÄî£¬Ò»¸ö°ü±íÊ¾windowsÏÂdll»òÕßlinuxÏÂÃæµÄso
-				package¿ª·¢Õß±ØĞëÑÏ¸ñ°´ÕÕ½Ó¿ÚµÄ·½Ê½½øĞĞ±àÂë£¬ÔÚc++ÖĞ¼´±íÏÖÎªvirtualº¯Êı¶ÔÍâÌá¹©·şÎñ
-				Ã¿Ò»¸öpackage¶ÔÍâÌá¹©µÄ·şÎñ¶¼ÓÉÆä½Ó¿ÚÎÄ¼ş½øĞĞ¶¨Òå£¬µ±¹ÜÀíÆ÷¼ÓÔØpackageÊ±»áµ÷ÓÃÔ¤¶¨ÒåµÄµ¼³öº¯Êı
-				¾ßÌå²Î¼Ócommon_define.hÎÄ¼şÖĞµÄPACKAGE_LOADºÍPACKAGE_UNLOADº¯ÊıÔ­ĞÍ
-				¿ÉÒÔÍ¨¹ıºêPACKAGE_DEFINE¶¨Òåµ¼³öº¯Êı
+	purpose:	packageç±»ä¼¼javaä¸­åŒ…(jar)çš„æ¦‚å¿µï¼Œä¸€ä¸ªåŒ…è¡¨ç¤ºwindowsä¸‹dllæˆ–è€…linuxä¸‹é¢çš„so
+				packageå¼€å‘è€…å¿…é¡»ä¸¥æ ¼æŒ‰ç…§æ¥å£çš„æ–¹å¼è¿›è¡Œç¼–ç ï¼Œåœ¨c++ä¸­å³è¡¨ç°ä¸ºvirtualå‡½æ•°å¯¹å¤–æä¾›æœåŠ¡
+				æ¯ä¸€ä¸ªpackageå¯¹å¤–æä¾›çš„æœåŠ¡éƒ½ç”±å…¶æ¥å£æ–‡ä»¶è¿›è¡Œå®šä¹‰ï¼Œå½“ç®¡ç†å™¨åŠ è½½packageæ—¶ä¼šè°ƒç”¨é¢„å®šä¹‰çš„å¯¼å‡ºå‡½æ•°
+				å…·ä½“å‚åŠ common_define.hæ–‡ä»¶ä¸­çš„PACKAGE_LOADå’ŒPACKAGE_UNLOADå‡½æ•°åŸå‹
+				å¯ä»¥é€šè¿‡å®PACKAGE_DEFINEå®šä¹‰å¯¼å‡ºå‡½æ•°
 *********************************************************************/
 
 #ifndef IPACKAGE_H_
@@ -27,57 +26,56 @@ enum EPackageNotify
 interface IPackage
 {
 	friend class PackageManager;
-	
 	struct PackageInfo
 	{
 		PackageInfo(){}
 		PackageInfo(package_handler handle, PACKAGE_LOAD load_fun, PACKAGE_UNLOAD unload_fun):
 		m_handle(handle),
-		m_packageLoad(load_fun), 
+		m_packageLoad(load_fun),
 		m_packageUnload(unload_fun)
 		{
 		}
-		//°ü¶ÔÓ¦µÄÆ½Ì¨Ïà¹ØµÄ¾ä±ú
+		//åŒ…å¯¹åº”çš„å¹³å°ç›¸å…³çš„å¥æŸ„
 		package_handler m_handle;
-		//°ü¼ÓÔØÊ±ÓÉ¹ÜÀíÆ÷µ÷ÓÃµÄ¼ÓÔØº¯Êı
+		//åŒ…åŠ è½½æ—¶ç”±ç®¡ç†å™¨è°ƒç”¨çš„åŠ è½½å‡½æ•°
 		PACKAGE_LOAD m_packageLoad;
-		//°üĞ¶ÔØÊ±ÓÉ¹ÜÀíÆ÷µ÷ÓÃµÄĞ¶ÔØº¯Êı
+		//åŒ…å¸è½½æ—¶ç”±ç®¡ç†å™¨è°ƒç”¨çš„å¸è½½å‡½æ•°
 		PACKAGE_UNLOAD m_packageUnload;
 	};
-	
+
 public:
 	virtual ~IPackage()
     {
     }
-	
+
 	/** 
-	 *  °üµÄ°æ±¾
+	 *  åŒ…çš„ç‰ˆæœ¬
 	 *  @return float.
 	*/
 	virtual float Version() = 0;
 
     /** 
-     *  °üÆô¶¯/Í£Ö¹
+     *  åŒ…å¯åŠ¨/åœæ­¢
      *  @return bool.
     */
     virtual bool Startup() = 0;
     virtual bool Shutdown() = 0;
-    
+
 	/** 
-	 *  °üµÄÃû×Ö
+	 *  åŒ…çš„åå­—
 	 *  @return std::string.
 	*/
 	virtual std::string Name() = 0;
-	
+
 	/** 
-	 *  Í¨ÖªÊÂ¼ş£¬ÊµÏÖÕß¸ù¾İtype½øĞĞstatic_cast
+	 *  é€šçŸ¥äº‹ä»¶ï¼Œå®ç°è€…æ ¹æ®typeè¿›è¡Œstatic_cast
 	 *  @param[in] type.
 	 *  @param[in] data.
 	 *  @return void.
 	*/
 	virtual void Notify(EPackageNotify type, const void* data) = 0;
 
-	//Ö»ÔÊĞí¹ÜÀíÆ÷µ÷ÓÃ
+	//åªå…è®¸ç®¡ç†å™¨è°ƒç”¨
 private:
 	void set_info(const PackageInfo& info)
 	{
@@ -87,7 +85,7 @@ private:
 	{
 		return m_info;
 	}
-	
+
 private:
 	PackageInfo m_info;
 };
@@ -95,3 +93,4 @@ private:
 }
 
 #endif // IPACKAGE_H_
+

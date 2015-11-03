@@ -36,3 +36,4 @@ template <typename T>
 typename Singleton<T>::ObjectCreator Singleton<T>::object_creator;
 
 #endif // UTIL_H
+

@@ -19,39 +19,35 @@ class PackageManager : public boost::noncopyable
 public:
     PackageManager();
 	~PackageManager();
-	
 	/** 
-	 *  °üÆô¶¯/Í£Ö¹
+	 *  åŒ…å¯åŠ¨/åœæ­¢
 	 *  @return bool.
 	*/
     PackageError::ErrorType Startup();
-	PackageError::ErrorType Shutdown();	
-	
+	PackageError::ErrorType Shutdown();
     /** 
-     *  ÉèÖÃÓÃ»§×Ô¶¨µÄÊı¾İ£¬¾ßÌå¸ñÊ½ÓÃ»§×Ô¼ºcast
+     *  è®¾ç½®ç”¨æˆ·è‡ªå®šçš„æ•°æ®ï¼Œå…·ä½“æ ¼å¼ç”¨æˆ·è‡ªå·±cast
      *  @param[in] data.
      *  @return void.
     */
     void set_user_data(const void* data);
     const void* user_data()const;
-    
+
 	/** 
-	 *  ¸ø¶¨°üµÄÂ·¾¶£¬¼ÓÔØµ½½ø³ÌÖĞ
+	 *  ç»™å®šåŒ…çš„è·¯å¾„ï¼ŒåŠ è½½åˆ°è¿›ç¨‹ä¸­
 	 *  @param[in] file.
 	 *  @param[in/out] package_name.
 	 *  @return bool.
 	*/
     PackageError::ErrorType AddPackage(const std::string& file, std::string& package_name);
-	
 	/** 
-	 *  °´°üÃûÉ¾³ı
+	 *  æŒ‰åŒ…ååˆ é™¤
 	 *  @param[in] package_name.
 	 *  @return bool.
 	*/
 	PackageError::ErrorType DelPackage(const std::string& package_name);
-	
 	/** 
-	 *  °´°üÃû»ñÈ¡ÏàÓ¦µÄ°ü½Ó¿Ú
+	 *  æŒ‰åŒ…åè·å–ç›¸åº”çš„åŒ…æ¥å£
 	 *  @param[in] package_name.
 	 *  @param[in/out] package.
 	 *  @return bool.
@@ -64,37 +60,35 @@ public:
 		{
             return PackageError::PACKAGE_ERR_PACKAGE_NOT_FOUND;
 		}
-        
+
 		package = dynamic_cast<T*>(it->second);
 		if( package == NULL )
         {
             return PackageError::PACKAGE_ERR_CAST_INTERFACE_FAIL;
         }
-        
+
         return PackageError::PACKAGE_SUCCESS;
 	}
-	
+
 private:
-	
-	/** ÔÚ±ê×¼80ÁĞµÄÆÁÄ»ÉÏÊä³öÆô¶¯ºÍ¹Ø±ÕĞÅÏ¢.
+	/** åœ¨æ ‡å‡†80åˆ—çš„å±å¹•ä¸Šè¾“å‡ºå¯åŠ¨å’Œå…³é—­ä¿¡æ¯.
 	 *
-	 * ÔÚ°üÆô¶¯ºÍ¹Ø±ÕÊ±£¬¸ù¾İÔËĞĞµÄ½á¹û´òÓ¡³öÏàÓ¦µÄĞÅÏ¢.
+	 * åœ¨åŒ…å¯åŠ¨å’Œå…³é—­æ—¶ï¼Œæ ¹æ®è¿è¡Œçš„ç»“æœæ‰“å°å‡ºç›¸åº”çš„ä¿¡æ¯.
 	 *
-	 *	@param[in] sname ·şÎñÃû³Æ.
-	 *	@param[in] proc  Æô¶¯»ò¹Ø±Õ¹ı³Ì.
-	 *	@param[in] isSuccessed Ö´ĞĞ½á¹û.
+	 *	@param[in] sname æœåŠ¡åç§°.
+	 *	@param[in] proc  å¯åŠ¨æˆ–å…³é—­è¿‡ç¨‹.
+	 *	@param[in] isSuccessed æ‰§è¡Œç»“æœ.
 	 */
 	static void PrintMsg( const std::string &sname, const std::string &proc, bool result );
-	
+
 private:
 	typedef std::unordered_map<std::string, IPackage*> package_map;
 	package_map m_packages_map;
-    
-	//ÓÃÓÚÔÚ¹Ø±Õ³ÌĞòÊ±°´ÕÕ°ü¼ÓÔØË³Ğò½øĞĞÄæĞòĞ¶ÔØ£¬Ê¹ÓÃreverse_iterator
+	//ç”¨äºåœ¨å…³é—­ç¨‹åºæ—¶æŒ‰ç…§åŒ…åŠ è½½é¡ºåºè¿›è¡Œé€†åºå¸è½½ï¼Œä½¿ç”¨reverse_iterator
 	typedef std::vector<IPackage*> package_vec;
 	package_vec m_packages_vec;
 
-    //ÓÃ»§×Ô¶¨ÒåÊı¾İ£¬Ä¿Ç°±£³ÖÎªconstÊôĞÔ
+    //ç”¨æˆ·è‡ªå®šä¹‰æ•°æ®ï¼Œç›®å‰ä¿æŒä¸ºconstå±æ€§
     const void* m_user_data;
 };
 
@@ -103,3 +97,4 @@ typedef Singleton<PackageManager> packagemgr_instance;
 }
 
 #endif // PACKAGEMANAGER_H
+

@@ -28,3 +28,4 @@ public:
 }
 
 #endif // PACKAGE_ERROR_H
+

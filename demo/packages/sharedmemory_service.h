@@ -8,7 +8,7 @@ class SharedMemoryService : public ISharedMemoryService, public packagemgr::ISer
 public:
     SharedMemoryService();
     virtual ~SharedMemoryService();
-    
+
     virtual int Shmget();
     virtual void* Shmat(int id);
     virtual int Shmdt(void* addr);
@@ -18,3 +18,4 @@ public:
 };
 
 #endif // SHAREDMEMORY_SERVICE_H_
+

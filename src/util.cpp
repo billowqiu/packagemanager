@@ -1,7 +1,7 @@
 ﻿#include "util.h"
 #include <string.h>
 
-std::string translateError(int aError) 
+std::string translateError(int aError)
 {
 #ifdef _WIN32
 	LPVOID lpMsgBuf;
@@ -18,14 +18,13 @@ std::string translateError(int aError)
 		);
 
 	std::string tmp = reinterpret_cast<const char*>(lpMsgBuf);
-	
 	LocalFree( lpMsgBuf );
 #else
 	std::string tmp = strerror(aError);
 #endif
 	std::string::size_type i = 0;
 
-	while( (i = tmp.find_first_of("\r\n", i)) != std::string::npos) 
+	while( (i = tmp.find_first_of("\r\n", i)) != std::string::npos)
 	{
 		tmp.erase(i, 1);
 	}

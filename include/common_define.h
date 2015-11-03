@@ -79,8 +79,9 @@ typedef void (*PACKAGE_UNLOAD)();
 				g_package = NULL;								\
 			}													\
 		}														\
-	};				
+	};
 
 }
 
 #endif // COMMON_DEFINE_H
+

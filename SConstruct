@@ -1,11 +1,13 @@
 #!/usr/bin/python
 
 env = Environment()
-env.Append(CCFLAGS = ['-I./include', '-ggdb3', '-std=c++0x'])
+env.Append(CPPPATH = ['-I./include', '-I./deps'])
+env.Append(CCFLAGS = ['-ggdb3', '-std=c++0x'])
 env.Library('lib/packagemanager', Glob('src/*.cpp'))
 
-env.Append(LIBPATH = ['lib', '/usr/local/lib'])
-env.Append(LIBS = ['packagemanager', 'tinyxml'])
+SConscript(['./deps/tinyxml/SConscript'])
+
+env.Append(LIBPATH = ['./lib', './deps/tinyxml'])
+env.Append(LIBS = ['packagemanager', 'tinyxml', 'dl'])
 env.Program('bin/demo', Glob('demo/*.cpp'))
 env.SharedLibrary('bin/commpackage', Glob('demo/packages/*.cpp'))
-#env_packages = Environment()
