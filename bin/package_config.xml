@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="GBK" standalone="yes" ?>
 
 <package_config version="1">
-    <package_info path = "./libcommpackage.so"/>
+    <!-- <package_info path = "./libcommpackage.so"/> -->
+    <package_info path = "./libcommpackage.dylib"/>
 </package_config>

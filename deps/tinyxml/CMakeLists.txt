@@ -1,0 +1,6 @@
+file(GLOB SRC_LIST *.cpp)
+message("tinyxml CMAKE_SOURCE_DIR is " ${CMAKE_SOURCE_DIR})
+message("tinyxml PROJECT_SOURCE_DIR is " ${PROJECT_SOURCE_DIR})
+message("tinyxml PROJECT_BINARY_DIR is " ${PROJECT_BINARY_DIR})
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+add_library(tinyxml ${SRC_LIST})

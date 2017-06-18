@@ -2,7 +2,7 @@
 
 env = Environment()
 env.Append(CPPPATH = ['-I./include', '-I./deps'])
-env.Append(CCFLAGS = ['-ggdb3', '-std=c++0x'])
+env.Append(CCFLAGS = ['-ggdb3', '-std=c++11'])
 env.Library('lib/packagemanager', Glob('src/*.cpp'))
 
 SConscript(['./deps/tinyxml/SConscript'])
